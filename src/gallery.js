@@ -38,6 +38,11 @@ const onGalleryLinkClick = event => {
 
   lightBoxRef.classList.toggle('is-open');
 
+  lightBoxRef.title = 'Click "right" or "left" to switch picture';
+  setTimeout(() => {
+    lightBoxRef.removeAttribute('title');
+  }, 4000);
+
   const currentDatasetSourse = event.currentTarget.firstElementChild.dataset.source;
 
   imagesRefs.forEach(img => {
