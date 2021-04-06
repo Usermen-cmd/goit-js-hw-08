@@ -52,8 +52,27 @@ const onLightBtnClick = () => {
   lightboxImageRef.alt = '';
   window.removeEventListener('keydown', onKeyboardClick);
 };
-const onArrowsClick = KeyEvent => {
-  KeyEvent.code === 'ArrowLeft' ? console.log('prev') : console.log('next');
+
+const onLeftArrowClick = () => {
+  for (let i = 0; i < imagesRefs.length; i += 1) {
+    if (lightboxImageRef.src === imagesRefs[i].original && i > 0) {
+      lightboxImageRef.src = imagesRefs[i - 1].original;
+      return;
+    }
+  }
+};
+
+const onRightArrowClick = () => {
+  for (let i = 0; i < imagesRefs.length; i += 1) {
+    if (lightboxImageRef.src === imagesRefs[i].original && i < imagesRefs.length - 1) {
+      lightboxImageRef.src = imagesRefs[i + 1].original;
+      return;
+    }
+  }
+};
+
+const onArrowsClick = eventKeys => {
+  eventKeys.code === 'ArrowLeft' ? onLeftArrowClick() : onRightArrowClick();
 };
 
 const onKeyboardClick = KeyEvent => {
