@@ -35,15 +35,17 @@ const galleryLinkRefs = document.querySelectorAll('.gallery__link');
 
 const onGalleryLinkClick = event => {
   event.preventDefault();
+
   lightBoxRef.classList.toggle('is-open');
+
   const currentDatasetSourse = event.currentTarget.firstElementChild.dataset.source;
+
   imagesRefs.forEach(img => {
     if (currentDatasetSourse === img.original) {
       lightboxImageRef.src = img.original;
       lightboxImageRef.alt = img.description;
       window.addEventListener('keydown', onKeyboardClick);
       lightboxOverlayRef.addEventListener('click', onOverlayClick);
-      return;
     }
   });
 };
@@ -56,32 +58,22 @@ const onLightBtnClick = () => {
   lightboxOverlayRef.removeEventListener('click', onOverlayClick);
 };
 
-const onLeftArrowClick = () => {
-  for (let i = 0; i < imagesRefs.length; i += 1) {
-    if (lightboxImageRef.src === imagesRefs[i].original && i > 0) {
-      lightboxImageRef.src = imagesRefs[i - 1].original;
-      lightboxImageRef.alt = imagesRefs[i - 1].description;
-      return;
+const onArrowClick = array => {
+  array.forEach((el, ind, arr) => {
+    if (lightboxImageRef.src === el.original && ind > 0) {
+      lightboxImageRef.src = arr[ind - 1].original;
+      lightboxImageRef.alt = arr[ind - 1].description;
     }
-  }
+  });
 };
 
-const onRightArrowClick = () => {
-  for (let i = 0; i < imagesRefs.length; i += 1) {
-    if (lightboxImageRef.src === imagesRefs[i].original && i < imagesRefs.length - 1) {
-      lightboxImageRef.src = imagesRefs[i + 1].original;
-      lightboxImageRef.alt = imagesRefs[i + 1].description;
-      return;
-    }
-  }
+const onArrowsClick = codeKey => {
+  const reverseImagesRefs = [...imagesRefs].reverse();
+  codeKey === 'ArrowLeft' ? onArrowClick(imagesRefs) : onArrowClick(reverseImagesRefs);
 };
 
-const onArrowsClick = eventKeys => {
-  eventKeys.code === 'ArrowLeft' ? onLeftArrowClick() : onRightArrowClick();
-};
-
-const onKeyboardClick = KeyEvent => {
-  KeyEvent.code === 'Escape' ? onLightBtnClick() : onArrowsClick(KeyEvent);
+const onKeyboardClick = ({ code }) => {
+  code === 'Escape' ? onLightBtnClick() : onArrowsClick(code);
 };
 
 const onOverlayClick = ({ target, currentTarget }) => {
