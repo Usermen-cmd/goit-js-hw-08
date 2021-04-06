@@ -60,12 +60,13 @@ const onLightBtnClick = () => {
   lightBoxRef.classList.toggle('is-open');
   lightboxImageRef.src = '';
   lightboxImageRef.alt = '';
+
   window.removeEventListener('keydown', onKeyboardClick);
   lightboxOverlayRef.removeEventListener('click', onOverlayClick);
 };
 
-const onArrowClick = array => {
-  array.forEach((el, ind, arr) => {
+const onArrowBtnClick = arrayRefs => {
+  arrayRefs.forEach((el, ind, arr) => {
     if (lightboxImageRef.src === el.original && ind > 0) {
       lightboxImageRef.src = arr[ind - 1].original;
       lightboxImageRef.alt = arr[ind - 1].description;
@@ -75,7 +76,9 @@ const onArrowClick = array => {
 
 const onArrowsClick = codeKey => {
   const reverseImagesRefs = [...imagesRefs].reverse();
-  codeKey === 'ArrowLeft' ? onArrowClick(imagesRefs) : onArrowClick(reverseImagesRefs);
+  if (codeKey === 'ArrowLeft' || codeKey === 'ArrowRight') {
+    codeKey === 'ArrowLeft' ? onArrowBtnClick(imagesRefs) : onArrowBtnClick(reverseImagesRefs);
+  }
 };
 
 const onKeyboardClick = ({ code }) => {
