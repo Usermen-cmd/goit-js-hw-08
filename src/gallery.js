@@ -5,10 +5,11 @@ const lightBoxRef = document.querySelector('.js-lightbox');
 const lightBtnRef = document.querySelector('.lightbox__button');
 const lightboxImageRef = document.querySelector('.lightbox__image');
 
-const imagesMurkup = imagesRefs
-  .map(
-    ({ preview, description, original }) =>
-      `<li class="gallery__item">
+const getImagesMarkup = array => {
+  return array
+    .map(
+      ({ preview, description, original }) =>
+        `<li class="gallery__item">
   <a
     class="gallery__link"
     href="${original}"
@@ -21,31 +22,43 @@ const imagesMurkup = imagesRefs
     />
   </a>
 </li>`,
-  )
-  .join('');
+    )
+    .join('');
+};
 
-galleryRef.insertAdjacentHTML('afterbegin', imagesMurkup);
+const imagesMarkup = getImagesMarkup(imagesRefs);
+
+galleryRef.insertAdjacentHTML('afterbegin', imagesMarkup);
 
 const galleryLinkRefs = document.querySelectorAll('.gallery__link');
 
-const onGalleryLinckClick = event => {
+const onGalleryLinkClick = event => {
   event.preventDefault();
   lightBoxRef.classList.toggle('is-open');
+  const currentDatasetSourse = event.currentTarget.firstElementChild.dataset.source;
   imagesRefs.forEach(img => {
-    if (event.currentTarget.href === img.original) {
-      console.log(img.original);
+    if (currentDatasetSourse === img.original) {
       lightboxImageRef.src = img.original;
       lightboxImageRef.alt = img.description;
+      window.addEventListener('keydown', onKeyboardClick);
+      return;
     }
   });
-  console.log(lightboxImageRef);
 };
 
 const onLightBtnClick = () => {
   lightBoxRef.classList.toggle('is-open');
   lightboxImageRef.src = '';
   lightboxImageRef.alt = '';
+  window.removeEventListener('keydown', onKeyboardClick);
+};
+const onArrowsClick = KeyEvent => {
+  KeyEvent.code === 'ArrowLeft' ? console.log('prev') : console.log('next');
 };
 
-galleryLinkRefs.forEach(btn => btn.addEventListener('click', onGalleryLinckClick));
+const onKeyboardClick = KeyEvent => {
+  KeyEvent.code === 'Escape' ? onLightBtnClick() : onArrowsClick(KeyEvent);
+};
+
+galleryLinkRefs.forEach(btn => btn.addEventListener('click', onGalleryLinkClick));
 lightBtnRef.addEventListener('click', onLightBtnClick);
