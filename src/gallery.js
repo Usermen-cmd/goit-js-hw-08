@@ -38,7 +38,8 @@ const onGalleryLinkClick = event => {
 
   lightBoxRef.classList.toggle('is-open');
 
-  lightBoxRef.title = 'Click "right" or "left" to switch picture';
+  lightBoxRef.setAttribute('title', 'Click "right" or "left" to switch picture');
+
   setTimeout(() => {
     lightBoxRef.removeAttribute('title');
   }, 4000);
