@@ -4,6 +4,7 @@ const galleryRef = document.querySelector('.js-gallery');
 const lightBoxRef = document.querySelector('.js-lightbox');
 const lightBtnRef = document.querySelector('.lightbox__button');
 const lightboxImageRef = document.querySelector('.lightbox__image');
+const lightboxOverlayRef = document.querySelector('.lightbox__overlay');
 
 const getImagesMarkup = array => {
   return array
@@ -41,6 +42,7 @@ const onGalleryLinkClick = event => {
       lightboxImageRef.src = img.original;
       lightboxImageRef.alt = img.description;
       window.addEventListener('keydown', onKeyboardClick);
+      lightboxOverlayRef.addEventListener('click', onOverlayClick);
       return;
     }
   });
@@ -51,12 +53,14 @@ const onLightBtnClick = () => {
   lightboxImageRef.src = '';
   lightboxImageRef.alt = '';
   window.removeEventListener('keydown', onKeyboardClick);
+  lightboxOverlayRef.removeEventListener('click', onOverlayClick);
 };
 
 const onLeftArrowClick = () => {
   for (let i = 0; i < imagesRefs.length; i += 1) {
     if (lightboxImageRef.src === imagesRefs[i].original && i > 0) {
       lightboxImageRef.src = imagesRefs[i - 1].original;
+      lightboxImageRef.alt = imagesRefs[i - 1].description;
       return;
     }
   }
@@ -66,6 +70,7 @@ const onRightArrowClick = () => {
   for (let i = 0; i < imagesRefs.length; i += 1) {
     if (lightboxImageRef.src === imagesRefs[i].original && i < imagesRefs.length - 1) {
       lightboxImageRef.src = imagesRefs[i + 1].original;
+      lightboxImageRef.alt = imagesRefs[i + 1].description;
       return;
     }
   }
@@ -79,5 +84,12 @@ const onKeyboardClick = KeyEvent => {
   KeyEvent.code === 'Escape' ? onLightBtnClick() : onArrowsClick(KeyEvent);
 };
 
-galleryLinkRefs.forEach(btn => btn.addEventListener('click', onGalleryLinkClick));
+const onOverlayClick = ({ target, currentTarget }) => {
+  if (target === currentTarget) {
+    onLightBtnClick();
+  }
+};
+
+galleryLinkRefs.forEach(link => link.addEventListener('click', onGalleryLinkClick));
 lightBtnRef.addEventListener('click', onLightBtnClick);
+lightboxOverlayRef.addEventListener('click', onOverlayClick);
