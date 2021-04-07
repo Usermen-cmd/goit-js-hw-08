@@ -63,6 +63,9 @@ const onKeyboardClick = keyevent => {
 };
 
 const turnImage = keyCode => {
+  if (!keyCode) {
+    return;
+  }
   const reverceImageArray = [...imagesRefs].reverse();
   const imageArray = keyCode === 'ArrowLeft' ? [...imagesRefs] : reverceImageArray;
 
