@@ -2,95 +2,89 @@ import imagesRefs from './gallery-items.js';
 
 const galleryRef = document.querySelector('.js-gallery');
 const lightBoxRef = document.querySelector('.js-lightbox');
-const lightBtnRef = document.querySelector('.lightbox__button');
-const lightboxImageRef = document.querySelector('.lightbox__image');
-const lightboxOverlayRef = document.querySelector('.lightbox__overlay');
+const lightBoxImgRef = document.querySelector('.lightbox__content .lightbox__image');
+const closeLigthBoxBtn = document.querySelector('[data-action="close-lightbox"]');
+const overlayRef = document.querySelector('.lightbox__overlay');
 
-const getImagesMarkup = array => {
+const setImagesMarkup = array => {
   return array
     .map(
-      ({ preview, description, original }) =>
+      ({ preview, original, description }) =>
         `<li class="gallery__item">
-  <a
-    class="gallery__link"
-    href="${original}"
-  >
-    <img
-      class="gallery__image"
-      src="${preview}"
-      data-source="${original}"
-      alt="${description}"
-    />
-  </a>
-</li>`,
+      <a class="gallery__link" href="">
+        <img
+          class="gallery__image"
+          src="${preview}"
+          data-source="${original}"
+          alt="${description}"
+        />
+      </a>
+    </li>`,
     )
     .join('');
 };
 
-const imagesMarkup = getImagesMarkup(imagesRefs);
+const markupImages = setImagesMarkup(imagesRefs);
+galleryRef.insertAdjacentHTML('afterbegin', markupImages);
 
-galleryRef.insertAdjacentHTML('afterbegin', imagesMarkup);
-
-const galleryLinkRefs = document.querySelectorAll('.gallery__link');
-
-const onGalleryLinkClick = event => {
+const onImageClick = event => {
   event.preventDefault();
+  const isDataSource = event.target.dataset.source;
+  if (!isDataSource) {
+    return;
+  }
+  lightBoxRef.classList.add('is-open');
+  addEventListeners();
+  const ligthboxImageSrc = event.target.dataset.source;
+  const ligthboxImageAlt = event.target.alt;
 
-  lightBoxRef.classList.toggle('is-open');
+  addImageLigthbox(ligthboxImageSrc, ligthboxImageAlt);
+};
 
-  lightBoxRef.setAttribute('title', 'Click "right" or "left" to switch picture');
+const addImageLigthbox = (src, alt) => {
+  lightBoxImgRef.src = src;
+  lightBoxImgRef.alt = alt;
+};
 
-  setTimeout(() => {
-    lightBoxRef.removeAttribute('title');
-  }, 4000);
+const onCloseLigthBoxBtnClick = () => {
+  lightBoxRef.classList.remove('is-open');
+  lightBoxImgRef.src = '';
+  lightBoxImgRef.alt = '';
+  deleteEventListeners();
+};
 
-  const currentDatasetSourse = event.currentTarget.firstElementChild.dataset.source;
+const onKeyboardClick = keyevent => {
+  if (keyevent.code === 'Escape') {
+    onCloseLigthBoxBtnClick();
+    return;
+  }
+  const arrowKey = keyevent.code === 'ArrowRight' || keyevent.code === 'ArrowLeft' ? keyevent.code : false;
+  turnImage(arrowKey);
+};
 
-  imagesRefs.forEach(img => {
-    if (currentDatasetSourse === img.original) {
-      lightboxImageRef.src = img.original;
-      lightboxImageRef.alt = img.description;
-      window.addEventListener('keydown', onKeyboardClick);
-      lightboxOverlayRef.addEventListener('click', onOverlayClick);
+const turnImage = keyCode => {
+  const reverceImageArray = [...imagesRefs].reverse();
+  const imageArray = keyCode === 'ArrowLeft' ? [...imagesRefs] : reverceImageArray;
+
+  for (let i = 0; i < imageArray.length; i += 1) {
+    if (imageArray[i].original === lightBoxImgRef.src && i > 0) {
+      const ligthboxImageSrc = imageArray[i - 1].original;
+      const ligthboxImageAlt = imageArray[i - 1].description;
+      addImageLigthbox(ligthboxImageSrc, ligthboxImageAlt);
+      break;
     }
-  });
-};
-
-const onLightBtnClick = () => {
-  lightBoxRef.classList.toggle('is-open');
-  lightboxImageRef.src = '';
-  lightboxImageRef.alt = '';
-
-  window.removeEventListener('keydown', onKeyboardClick);
-  lightboxOverlayRef.removeEventListener('click', onOverlayClick);
-};
-
-const onArrowBtnClick = arrayRefs => {
-  arrayRefs.forEach((el, ind, arr) => {
-    if (lightboxImageRef.src === el.original && ind > 0) {
-      lightboxImageRef.src = arr[ind - 1].original;
-      lightboxImageRef.alt = arr[ind - 1].description;
-    }
-  });
-};
-
-const onArrowsClick = codeKey => {
-  const reverseImagesRefs = [...imagesRefs].reverse();
-  if (codeKey === 'ArrowLeft' || codeKey === 'ArrowRight') {
-    codeKey === 'ArrowLeft' ? onArrowBtnClick(imagesRefs) : onArrowBtnClick(reverseImagesRefs);
   }
 };
 
-const onKeyboardClick = ({ code }) => {
-  code === 'Escape' ? onLightBtnClick() : onArrowsClick(code);
+const addEventListeners = () => {
+  overlayRef.addEventListener('click', onCloseLigthBoxBtnClick);
+  document.addEventListener('keydown', onKeyboardClick);
+  closeLigthBoxBtn.addEventListener('click', onCloseLigthBoxBtnClick);
+};
+const deleteEventListeners = () => {
+  overlayRef.removeEventListener('click', onCloseLigthBoxBtnClick);
+  document.removeEventListener('keydown', onKeyboardClick);
+  closeLigthBoxBtn.removeEventListener('click', onCloseLigthBoxBtnClick);
 };
 
-const onOverlayClick = ({ target, currentTarget }) => {
-  if (target === currentTarget) {
-    onLightBtnClick();
-  }
-};
-
-galleryLinkRefs.forEach(link => link.addEventListener('click', onGalleryLinkClick));
-lightBtnRef.addEventListener('click', onLightBtnClick);
-lightboxOverlayRef.addEventListener('click', onOverlayClick);
+galleryRef.addEventListener('click', onImageClick);
