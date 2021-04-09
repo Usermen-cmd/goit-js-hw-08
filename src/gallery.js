@@ -1,9 +1,9 @@
 import imagesRefs from './gallery-items.js';
 
 class Gallery {
-  constructor(imagesArrayRefs) {
+  constructor(imagesArrayRefs, parentSelector) {
     this.images = imagesArrayRefs;
-    this.galleryRef = document.querySelector('.js-gallery');
+    this.galleryRef = document.querySelector(parentSelector);
     this.lightBoxRef = document.querySelector('.js-lightbox');
     this.lightBoxImgRef = document.querySelector('.lightbox__content .lightbox__image');
     this.closeLigthBoxBtn = document.querySelector('[data-action="close-lightbox"]');
@@ -11,6 +11,7 @@ class Gallery {
 
     this.onCloseLigthBoxBtnClick = this.onCloseLigthBoxBtnClick.bind(this);
     this.onKeyboardClick = this.onKeyboardClick.bind(this);
+    this.startRenderGallery = this.setMarkup; //call this method for start render gallery
   }
 
   setMarkup() {
@@ -102,6 +103,7 @@ class Gallery {
   }
 }
 
-const gallery = new Gallery(imagesRefs);
+//new Gallery accepts 2 arguments: 1.Array image objects; 2.Parent selector;
 
-gallery.setMarkup();
+const gallery = new Gallery(imagesRefs, '.js-gallery');
+gallery.startRenderGallery();
