@@ -54,7 +54,6 @@ class Gallery {
     const callback = (entries, observer) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
-          console.log(entry);
           entry.target.src = entry.target.dataset.preview;
           observer.unobserve(entry.target);
         }
