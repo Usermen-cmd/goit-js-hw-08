@@ -19,10 +19,11 @@ class Gallery {
       .map(
         ({ preview, original, description }) =>
           `<li class="gallery__item">
-      <a class="gallery__link" href="">
+      <a class="gallery__link" href="${original}">
         <img
           class="gallery__image"
-          src="${preview}"
+          src="https://i.pinimg.com/originals/b4/a1/8b/b4a18bd01aef56149e6cf82e3e9b35b6.gif"
+          data-preview="${preview}"
           data-source="${original}"
           alt="${description}"
         />
@@ -36,6 +37,33 @@ class Gallery {
     this.galleryRef.insertAdjacentHTML('afterbegin', markup);
     this.galleryRef.addEventListener('click', e => {
       this.onImageClick.call(this, e);
+    });
+    this.preloaderImg();
+  }
+
+  preloaderImg() {
+    const options = {
+      threshold: 0.7,
+      root: document,
+      delay: 500,
+      trackVisibility: true,
+    };
+
+    const galleryImageRef = document.querySelectorAll('.gallery__image');
+
+    const callback = (entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          console.log(entry);
+          entry.target.src = entry.target.dataset.preview;
+          observer.unobserve(entry.target);
+        }
+      });
+    };
+    const observer = new IntersectionObserver(callback, options);
+
+    galleryImageRef.forEach(imageRef => {
+      observer.observe(imageRef);
     });
   }
 
