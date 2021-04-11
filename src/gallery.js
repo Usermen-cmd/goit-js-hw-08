@@ -11,6 +11,7 @@ class Gallery {
 
     this.onCloseLigthBoxBtnClick = this.onCloseLigthBoxBtnClick.bind(this);
     this.onKeyboardClick = this.onKeyboardClick.bind(this);
+
     this.startRenderGallery = this.setMarkup; //call this method for start render gallery
   }
 
@@ -38,6 +39,7 @@ class Gallery {
     this.galleryRef.addEventListener('click', e => {
       this.onImageClick.call(this, e);
     });
+
     this.preloaderImg();
   }
 
@@ -86,8 +88,7 @@ class Gallery {
   }
   onCloseLigthBoxBtnClick() {
     this.lightBoxRef.classList.remove('is-open');
-    this.lightBoxImgRef.src = '';
-    this.lightBoxImgRef.alt = '';
+    this.addImageLigthbox('', '');
     this.deleteEventListeners();
   }
 
